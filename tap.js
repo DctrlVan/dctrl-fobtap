@@ -6,11 +6,12 @@ const device = reader.open(config.fobReader)
 var fob = ""
 var emit = null
 
-module.exports = fobtapStream
 
 const fobtapStream = Kefir.stream(emitter => {
     emit = emitter.emit
-})
+}).log()
+
+module.exports = fobtapStream
 
 reader.on("EV_KEY", function(data) {
     if (data.value == 1)
