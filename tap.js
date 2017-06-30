@@ -1,11 +1,13 @@
+const Kefir = require('kefir')
+const evdev = require('evdev')
+
 const config = require('./config')
 
-const evdev = require('evdev')
 const reader = new evdev()
 const device = reader.open(config.fobReader)
+
 var fob = ""
 var emit = null
-
 
 const fobtapStream = Kefir.stream(emitter => {
     emit = emitter.emit

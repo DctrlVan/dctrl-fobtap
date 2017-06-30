@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "evdev": "^0.2.3"
+    "evdev": "^0.2.3",
+    "kefir": "^3.7.2"
   }
 }
