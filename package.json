@@ -1,0 +1,14 @@
+{
+  "name": "dctrl-fobtap",
+  "version": "1.0.0",
+  "description": "Part of dctrlapp. Read the member/bounty fobs and handle",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "evdev": "^0.2.3"
+  }
+}
