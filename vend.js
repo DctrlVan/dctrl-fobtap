@@ -5,7 +5,7 @@ const config = require('./config')
 var emit = null
 const vendStream = Kefir.stream(emitter => {
     emit = emitter.emit
-})
+}).log()
 
 function vendChecker(scannedFob) {
   console.log(config.brainLocation)
@@ -39,7 +39,6 @@ function vendChecker(scannedFob) {
         })
     })
 }
-
 
 module.exports = {
     vendChecker,
