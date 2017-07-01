@@ -5,7 +5,7 @@ const config = require('./config')
 var emit = null
 const vendStream = Kefir.stream(emitter => {
     emit = emitter.emit
-}).log()
+}).log('vendStream')
 
 function vendChecker(scannedFob) {
   console.log(config.brainLocation)

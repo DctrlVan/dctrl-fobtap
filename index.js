@@ -8,7 +8,7 @@
 //     }
 //     fob = ""
 // })
-
+require('./dispense')
 const fobtapStream = require('./tap')
 const bountyChecker = require('./bountyChecker')
 const vendChecker = require('./vend').vendChecker
