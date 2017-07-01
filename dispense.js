@@ -2,9 +2,10 @@
 const Kefir = require('kefir')
 const exec = require('child_process').exec
 
-const paymentStream = require('./vend').vendStream
+const ps = require('./vend').vendStream
+ps.log('passed to dispense')
 
-module.exports = bitPepsi(paymentStream)
+module.exports = bitPepsi(ps)
 
 function bitPepsi(paymentStream) {
     var heartbeat
