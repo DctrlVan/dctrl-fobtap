@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "evdev": "^0.2.3",
-    "kefir": "^3.7.2"
+    "kefir": "^3.7.2",
+    "superagent": "^3.5.2"
   }
 }

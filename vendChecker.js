@@ -3,11 +3,12 @@ const request = require('superagent')
 const config = require('./config')
 
 function vendChecker(scannedFob) {
+  console.log(config.brainLocation)
   request
     .get(config.brainLocation + 'members/' + scannedFob)
     .end((err, res) => {
       if (err || res.body.error) {
-        console.log('Invalid Fob')
+        console.log('Invalid Fob', err, res.body)
         return null
       }
       let chargeRequest = {
