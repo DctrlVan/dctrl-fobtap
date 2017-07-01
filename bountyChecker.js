@@ -1,6 +1,11 @@
 const request = require('superagent')
-
 const config = require('./config')
+
+var emit = null
+const vendStream = Kefir.stream(emitter => {
+    emit = emitter.emit
+})
+
 
 var claimRequest, payoutRequest, activeBounty
 function resetBountyClaim(){
@@ -58,6 +63,7 @@ function bountyClaimProcess(scannedFob, isHandledCallback) {
                     }
                     console.log(res.body)
                 })
+
             request
                 .post(config.bountiesSlack)
                 .send({text: activeBounty.name + ' was claimed by ' + res.body.name+ ' for $'+ payoutRequest.action.amount})

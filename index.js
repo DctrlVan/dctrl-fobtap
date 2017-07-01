@@ -11,7 +11,7 @@
 
 const fobtapStream = require('./tap')
 const bountyChecker = require('./bountyChecker')
-const vendChecker = require('./vendChecker')
+const vendChecker = require('./vend').vendChecker
 
 // fob ~ rfid tags the members have
 fobtapStream.onValue(fob => {

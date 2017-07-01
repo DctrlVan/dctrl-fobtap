@@ -36,4 +36,7 @@ function vendChecker(scannedFob) {
 }
 
 
-module.exports = vendChecker
+module.exports = {
+    vendChecker,
+    vendStream
+}
