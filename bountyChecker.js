@@ -1,14 +1,29 @@
-
-const brainLocation = require('./config').brainLocation
 const request = require('superagent')
 
-module.exports = bountyClaimProcess
+const config = require('./config')
+
+var claimRequest, payoutRequest, activeBounty
+function resetBountyClaim(){
+  claimRequest  = {
+    action: {
+      type: "bounty-claimed",
+    }
+  }
+  payoutRequest = {
+    action: {
+      type: "member-paid",
+      "cash?": false,
+    }
+  }
+  activeBounty = false
+}
+resetBountyClaim()
 
 function bountyClaimProcess(scannedFob, isHandledCallback) {
   if (activeBounty) {
       // Have an active bounty so next tap is to claim bounty:
       request
-          .get(brainLocation + 'members/' + scannedFob)
+          .get(config.brainLocation + 'members/' + scannedFob)
           .end((err, res) => {
             if (err || res.body.error) {
               console.log('Invalid Fob')
@@ -24,7 +39,7 @@ function bountyClaimProcess(scannedFob, isHandledCallback) {
             console.log({payoutRequest, claimRequest})
 
             request
-                .post(brainLocation + 'members')
+                .post(config.brainLocation + 'members')
                 .send(payoutRequest)
                 .end((err, res) => {
                     if (err || res.body.error) {
@@ -35,7 +50,7 @@ function bountyClaimProcess(scannedFob, isHandledCallback) {
                 })
 
             request
-                .post(brainLocation + 'bounties')
+                .post(config.brainLocation + 'bounties')
                 .send(claimRequest)
                 .end((err, res) => {
                     if (err || res.body.error) {
@@ -44,7 +59,7 @@ function bountyClaimProcess(scannedFob, isHandledCallback) {
                     console.log(res.body)
                 })
             request
-                .post(bountiesSlack)
+                .post(config.bountiesSlack)
                 .send({text: activeBounty.name + ' was claimed by ' + res.body.name+ ' for $'+ payoutRequest.action.amount})
                 .end( (err, res)=> {
                     console.log({err,res})
@@ -57,7 +72,7 @@ function bountyClaimProcess(scannedFob, isHandledCallback) {
           })
   } else {
     request
-      .get(brainLocation + 'bounties/' + scannedFob)
+      .get(config.brainLocation + 'bounties/' + scannedFob)
       .end((err, res) => {
           if (err || res.body.error || ( Object.keys(res.body).length === 0 ) ) {
               console.log('Invalid Fob, bounties/:fob')
@@ -78,6 +93,15 @@ function bountyClaimProcess(scannedFob, isHandledCallback) {
           isHandledCallback(true)
       })
   }
-
-
 }
+
+function calculatePayout(monthValue, lastClaimed, now){
+    let msSince = now - lastClaimed
+    let today = new Date()
+    let daysThisMonth = new Date(today.getYear(), today.getMonth(), 0).getDate()
+    let msThisMonth = daysThisMonth * 24 * 60 * 60 * 1000
+    return (msSince / msThisMonth) * monthValue
+}
+
+
+module.exports = bountyClaimProcess

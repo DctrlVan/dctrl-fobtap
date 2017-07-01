@@ -24,6 +24,7 @@ function keyparse(code) {
     var key = code.substr(4);
     if (key == "ENTER") {
         emit(fob)
+        fob = ""
     } else {
         fob = fob + key;
     }
