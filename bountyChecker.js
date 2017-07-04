@@ -76,9 +76,10 @@ function claimRequest(){
         .send(claimRequest)
         .end((err, res) => {
             if (err || res.body.error) {
-              console.log('Unable to create')
+                console.log(err, res.body)
+            } else {
+                console.log(res.body)
             }
-            console.log(res.body)
         })
 }
 
@@ -88,7 +89,9 @@ function payoutRequest(){
         .send(payoutRequest)
         .end((err, res) => {
             if (err || res.body.error) {
-              console.log('Unable to create')
+                console.log(err, res.body)
+            } else {
+                console.log(res.body)
             }
         })
 }
@@ -98,7 +101,11 @@ function slackReq(){
         .post(config.bountiesSlack)
         .send({text: activeBounty.name + ' was claimed by ' + claimant.name+ ' for $'+ payoutRequest.action.amount})
         .end( (err, res)=> {
-            console.log({err,res})
+            if (err || res.body.error) {
+                console.log(err, res.body)
+            } else {
+                console.log(res.body)
+            }
         })
 }
 
