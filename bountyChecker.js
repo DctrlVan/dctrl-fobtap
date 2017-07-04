@@ -18,7 +18,7 @@ function resetBountyClaim(){
 }
 resetBountyClaim()
 
-function bountyTagCheck(fob, isHandledCallback){
+function bountyTagCheck(scannedFob, isHandledCallback){
     request
         .get(config.brainLocation + 'bounties/' + scannedFob)
         .end((err, res) => {
