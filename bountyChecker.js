@@ -33,14 +33,14 @@ function bountyClaimProcess(scannedFob, isHandledCallback) {
     bountyTagCheck(scannedFob, isHandledCallback)
     if (activeBounty) {
         // Have an active bounty so next tap is to claim bounty:
-        attemptToClaim(scannedFob)
+        attemptToClaim(scannedFob, isHandledCallback)
         isHandledCallback(true)
     } else {
         triggerNotHandled(isHandledCallback)
     }
 }
 
-function attemptToClaim(scannedFob){
+function attemptToClaim(scannedFob, isHandledCallback){
     request
         .get(config.brainLocation + 'members/' + scannedFob)
         .end((err, res) => {
