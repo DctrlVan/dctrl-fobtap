@@ -94,6 +94,7 @@ function bountyTagCheck(scannedFob, isHandledCallback){
 }
 
 function claimReq(){
+    console.log(claimRequest)
     request
         .post(config.brainLocation + 'bounties')
         .send(claimRequest)
@@ -107,6 +108,7 @@ function claimReq(){
 }
 
 function payoutReq(){
+    console.log(payoutRequest)
     request
         .post(config.brainLocation + 'members')
         .send(payoutRequest)
