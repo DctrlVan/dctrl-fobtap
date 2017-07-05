@@ -44,7 +44,7 @@ function attemptToClaim(scannedFob){
     request
         .get(config.brainLocation + 'members/' + scannedFob)
         .end((err, res) => {
-            if (err || res.body.error) {
+            if (err || res.body.error || !Object.keys(res.body).length) {
                 console.log('Invalid Fob')
                 // clear bounty if random fob tries to claim?
                 resetBountyClaim()
