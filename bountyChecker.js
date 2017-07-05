@@ -46,7 +46,7 @@ function bountyClaimProcess(scannedFob, isHandledCallback) {
                     claimRequest.action["address"] = claimant.address
                     claimRequest.action["notes"] = Date.now().toString()
 
-                    claimRequest()
+                    claimReq()
                     payoutRequest()
                     slackReq()
                     resetBountyClaim()
@@ -81,7 +81,7 @@ function bountyTagCheck(scannedFob, isHandledCallback){
         })
 }
 
-function claimRequest(){
+function claimReq(){
     request
         .post(config.brainLocation + 'bounties')
         .send(claimRequest)
