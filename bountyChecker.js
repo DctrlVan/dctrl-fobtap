@@ -18,12 +18,51 @@ function resetBountyClaim(){
 }
 resetBountyClaim()
 
+
+var notHandled = 0
+function triggerNotHandled(isHandledCallback){
+    notHandled++
+    if ( notHandled === 2){
+        isHandledCallback(false)
+    }
+}
+
+function bountyClaimProcess(scannedFob, isHandledCallback) {
+    notHandled = 0
+    bountyTagCheck(scannedFob, isHandledCallback)
+    if (activeBounty) {
+        // Have an active bounty so next tap is to claim bounty:
+        request
+            .get(config.brainLocation + 'members/' + scannedFob)
+            .end((err, res) => {
+                if (err || res.body.error) {
+                    console.log('Invalid Fob')
+                    // clear bounty if random fob tries to claim?
+                    resetBountyClaim()
+                    return triggerNotHandled(isHandledCallback)
+                } else {
+                    claimant = res.body
+                    payoutRequest.action["address"] = claimant.address
+                    claimRequest.action["address"] = claimant.address
+                    claimRequest.action["notes"] = Date.now().toString()
+
+                    claimRequest()
+                    payoutRequest()
+                    slackReq()
+                    resetBountyClaim()
+                    isHandledCallback(true)
+                }
+            })
+    }
+}
+
 function bountyTagCheck(scannedFob, isHandledCallback){
     request
         .get(config.brainLocation + 'bounties/' + scannedFob)
         .end((err, res) => {
-            if ( err || res.body.error ) {
-                console.log('Invalid Fob, bounties/:fob')
+            if ( err || res.body.error || !Object.keys(res.body).length ) {
+                console.log('No bounty, bounties/:fob')
+                triggerNotHandled(isHandledCallback)
             }
 
             activeBounty = res.body
@@ -40,34 +79,6 @@ function bountyTagCheck(scannedFob, isHandledCallback){
             // This was a bounty tag so we do not need to check for beer
             isHandledCallback(true)
         })
-}
-
-function bountyClaimProcess(scannedFob, isHandledCallback) {
-    bountyTagCheck(scannedFob, isHandledCallback)
-    if (activeBounty) {
-        // Have an active bounty so next tap is to claim bounty:
-        request
-            .get(config.brainLocation + 'members/' + scannedFob)
-            .end((err, res) => {
-                if (err || res.body.error) {
-                    console.log('Invalid Fob')
-                    // clear bounty if random fob tries to claim?
-                    resetBountyClaim()
-                    return isHandledCallback(false)
-                } else {
-                    claimant = res.body
-                    payoutRequest.action["address"] = claimant.address
-                    claimRequest.action["address"] = claimant.address
-                    claimRequest.action["notes"] = Date.now().toString()
-
-                    claimRequest()
-                    payoutRequest()
-                    slackReq()
-                    resetBountyClaim()
-                    isHandledCallback(true)
-                }
-            })
-    }
 }
 
 function claimRequest(){
