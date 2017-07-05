@@ -8,7 +8,6 @@ const vendStream = Kefir.stream(emitter => {
 }).log('vendStream')
 
 function vendChecker(scannedFob) {
-  console.log(config.brainLocation)
   request
     .get(config.brainLocation + 'members/' + scannedFob)
     .end((err, res) => {
@@ -24,9 +23,6 @@ function vendChecker(scannedFob) {
           notes: "BitPepsi"
         }
       }
-      console.log({
-        chargeRequest
-      })
       request
         .post(config.brainLocation + 'members')
         .send(chargeRequest)
@@ -35,6 +31,7 @@ function vendChecker(scannedFob) {
             console.log('Unable to create')
             return null
           }
+          console.log(res.body)
           emit(1)
         })
     })

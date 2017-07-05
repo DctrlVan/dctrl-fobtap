@@ -1,20 +1,20 @@
 const request = require('superagent')
 const config = require('./config')
-
 var claimRequest, payoutRequest, activeBounty, claimant
+
 function resetBountyClaim(){
-  claimRequest  = {
-    action: {
-      type: "bounty-claimed",
+    claimRequest  = {
+        action: {
+            type: "bounty-claimed",
+        }
     }
-  }
-  payoutRequest = {
-    action: {
-      type: "member-paid",
-      "cash?": false,
+    payoutRequest = {
+        action: {
+            type: "member-paid",
+            "cash?": false,
+        }
     }
-  }
-  activeBounty = false
+    activeBounty = false
 }
 resetBountyClaim()
 
@@ -36,7 +36,7 @@ function bountyClaimProcess(scannedFob, isHandledCallback) {
         attemptToClaim(scannedFob)
         isHandledCallback(true)
     } else {
-      return triggerNotHandled(isHandledCallback)
+        triggerNotHandled(isHandledCallback)
     }
 }
 
@@ -90,7 +90,6 @@ function bountyTagCheck(scannedFob, isHandledCallback){
               // This was a bounty tag so we do not need to check for beer
               isHandledCallback(true)
             }
-
         })
 }
 
