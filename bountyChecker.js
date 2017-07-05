@@ -27,6 +27,7 @@ function triggerNotHandled(isHandledCallback){
     }
 }
 
+// exported
 function bountyClaimProcess(scannedFob, isHandledCallback) {
     notHandled = 0
     bountyTagCheck(scannedFob, isHandledCallback)
@@ -56,7 +57,11 @@ function attemptToClaim(scannedFob){
 
                 claimReq()
                 payoutReq()
-                slackReq()
+                if (config.bountiesSlack){
+                    slackReq()
+                } else {
+                    console.warn("missing slack hook")
+                }
                 resetBountyClaim()
             }
         })
