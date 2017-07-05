@@ -18,12 +18,12 @@ function resetBountyClaim(){
 }
 resetBountyClaim()
 
-
 var notHandled = 0
 function triggerNotHandled(isHandledCallback){
     notHandled++
     if ( notHandled === 2){
         isHandledCallback(false)
+        notHandled = 0
     }
 }
 
@@ -32,29 +32,36 @@ function bountyClaimProcess(scannedFob, isHandledCallback) {
     bountyTagCheck(scannedFob, isHandledCallback)
     if (activeBounty) {
         // Have an active bounty so next tap is to claim bounty:
-        request
-            .get(config.brainLocation + 'members/' + scannedFob)
-            .end((err, res) => {
-                if (err || res.body.error) {
-                    console.log('Invalid Fob')
-                    // clear bounty if random fob tries to claim?
-                    resetBountyClaim()
-                    return triggerNotHandled(isHandledCallback)
-                } else {
-                    claimant = res.body
-                    payoutRequest.action["address"] = claimant.address
-                    claimRequest.action["address"] = claimant.address
-                    claimRequest.action["notes"] = Date.now().toString()
-
-                    claimReq()
-                    payoutRequest()
-                    slackReq()
-                    resetBountyClaim()
-                    isHandledCallback(true)
-                }
-            })
+        attemptToClaim()
+        isHandledCallback(true)
+    } else {
+      return triggerNotHandled(isHandledCallback)
     }
 }
+
+function attemptToClaim(){
+    request
+        .get(config.brainLocation + 'members/' + scannedFob)
+        .end((err, res) => {
+            if (err || res.body.error) {
+                console.log('Invalid Fob')
+                // clear bounty if random fob tries to claim?
+                resetBountyClaim()
+                return triggerNotHandled(isHandledCallback)
+            } else {
+                claimant = res.body
+                payoutRequest.action["address"] = claimant.address
+                claimRequest.action["address"] = claimant.address
+                claimRequest.action["notes"] = Date.now().toString()
+
+                claimReq()
+                payoutRequest()
+                slackReq()
+                resetBountyClaim()
+            }
+        })
+}
+
 
 function bountyTagCheck(scannedFob, isHandledCallback){
     request
@@ -120,7 +127,6 @@ function slackReq(){
         })
 }
 
-
 function calculatePayout(monthValue, lastClaimed, now){
     let msSince = now - lastClaimed
     let today = new Date()
@@ -128,6 +134,5 @@ function calculatePayout(monthValue, lastClaimed, now){
     let msThisMonth = daysThisMonth * 24 * 60 * 60 * 1000
     return (msSince / msThisMonth) * monthValue
 }
-
 
 module.exports = bountyClaimProcess
