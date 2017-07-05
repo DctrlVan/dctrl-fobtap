@@ -75,21 +75,22 @@ function bountyTagCheck(scannedFob, isHandledCallback){
             if ( err || res.body.error || !Object.keys(res.body).length ) {
                 console.log('No bounty, bounties/:fob')
                 triggerNotHandled(isHandledCallback)
+            } else {
+              activeBounty = res.body
+              console.log("new active bounty!", activeBounty)
+
+              let now = Date.now()
+              let monthValue = activeBounty.value
+              let lastClaimed = activeBounty.notes
+              let amount = calculatePayout(monthValue, lastClaimed, now)
+              // Build in the info we need from the bounty, next tap will send these requests
+              claimRequest.action["bounty-id"] = activeBounty["bounty-id"]
+              payoutRequest.action["notes"] = activeBounty["bounty-id"]
+              payoutRequest.action["amount"] = amount.toString()
+              // This was a bounty tag so we do not need to check for beer
+              isHandledCallback(true)
             }
 
-            activeBounty = res.body
-            console.log("new active bounty!", activeBounty)
-
-            let now = Date.now()
-            let monthValue = activeBounty.value
-            let lastClaimed = activeBounty.notes
-            let amount = calculatePayout(monthValue, lastClaimed, now)
-            // Build in the info we need from the bounty, next tap will send these requests
-            claimRequest.action["bounty-id"] = activeBounty["bounty-id"]
-            payoutRequest.action["notes"] = activeBounty["bounty-id"]
-            payoutRequest.action["amount"] = amount.toString()
-            // This was a bounty tag so we do not need to check for beer
-            isHandledCallback(true)
         })
 }
 
