@@ -55,7 +55,7 @@ function attemptToClaim(scannedFob){
                 claimRequest.action["notes"] = Date.now().toString()
 
                 claimReq()
-                payoutRequest()
+                payoutReq()
                 slackReq()
                 resetBountyClaim()
             }
@@ -101,7 +101,7 @@ function claimReq(){
         })
 }
 
-function payoutRequest(){
+function payoutReq(){
     request
         .post(config.brainLocation + 'members')
         .send(payoutRequest)
