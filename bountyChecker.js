@@ -57,11 +57,7 @@ function attemptToClaim(scannedFob, isHandledCallback){
 
                 claimReq()
                 payoutReq()
-                if (config.bountiesSlack){
-                    slackReq()
-                } else {
-                    console.warn("missing slack hook")
-                }
+                slackReq()
                 resetBountyClaim()
             }
         })
