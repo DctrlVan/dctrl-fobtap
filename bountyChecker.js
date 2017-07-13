@@ -55,10 +55,18 @@ function attemptToClaim(scannedFob, isHandledCallback){
                 claimRequest.action["address"] = claimant.address
                 claimRequest.action["notes"] = Date.now().toString()
 
-                claimReq()
-                payoutReq()
-                slackReq()
-                resetBountyClaim()
+                claimReq((err, res)=> {
+                    if (err) return console.log('claimReq error', err)
+                    payoutReq((err,res)=> {
+                        if (err) return console.log('payoutReq error', err)
+                        // TODO: flash led to show bounty claimed successfully
+                        slackReq((err, res)=> {
+                            if (err) return console.log('slack err: ', err);
+                            console.log('success!')
+                            resetBountyClaim()
+                        })
+                    })
+                })
             }
         })
 }
@@ -89,45 +97,27 @@ function bountyTagCheck(scannedFob, isHandledCallback){
         })
 }
 
-function claimReq(){
+function claimReq(callback){
     console.log(claimRequest)
     request
         .post(config.brainLocation + 'bounties')
         .send(claimRequest)
-        .end((err, res) => {
-            if (err || res.body.error) {
-                console.log(err, res.body)
-            } else {
-                console.log(res.body)
-            }
-        })
+        .end(callback)
 }
 
-function payoutReq(){
+function payoutReq(callback){
     console.log(payoutRequest)
     request
         .post(config.brainLocation + 'members')
         .send(payoutRequest)
-        .end((err, res) => {
-            if (err || res.body.error) {
-                console.log(err, res.body)
-            } else {
-                console.log(res.body)
-            }
-        })
+        .end(callback)
 }
 
-function slackReq(){
+function slackReq(callback){
     request
         .post(config.bountiesSlack)
         .send({text: activeBounty.name + ' was claimed by ' + claimant.name+ ' for $'+ payoutRequest.action.amount})
-        .end( (err, res)=> {
-            if (err || res.body.error) {
-                console.log(err, res.body)
-            } else {
-                console.log(res.body)
-            }
-        })
+        .end(callback)
 }
 
 function calculatePayout(monthValue, lastClaimed, now){
