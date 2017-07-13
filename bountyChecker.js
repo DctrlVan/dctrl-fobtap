@@ -85,7 +85,7 @@ function bountyTagCheck(scannedFob, isHandledCallback){
 
               let now = Date.now()
               let monthValue = activeBounty.value
-              let lastClaimed = activeBounty.notes
+              let lastClaimed = activeBounty['last-claimed']
               let amount = calculatePayout(monthValue, lastClaimed, now)
               // Build in the info we need from the bounty, next tap will send these requests
               claimRequest.action["bounty-id"] = activeBounty["bounty-id"]
