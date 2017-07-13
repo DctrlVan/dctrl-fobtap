@@ -83,10 +83,9 @@ function bountyTagCheck(scannedFob, isHandledCallback){
               activeBounty = res.body
               console.log("new active bounty!", activeBounty)
 
-              let now = Date.now()
               let monthValue = activeBounty.value
               let lastClaimed = activeBounty['last-claimed']
-              let amount = calculatePayout(monthValue, lastClaimed, now)
+              let amount = calculatePayout(monthValue, lastClaimed)
               // Build in the info we need from the bounty, next tap will send these requests
               claimRequest.action["bounty-id"] = activeBounty["bounty-id"]
               payoutRequest.action["notes"] = activeBounty["bounty-id"]
@@ -120,8 +119,8 @@ function slackReq(callback){
         .end(callback)
 }
 
-function calculatePayout(monthValue, lastClaimed, now){
-    let msSince = now - lastClaimed
+function calculatePayout(monthValue, lastClaimed){
+    let msSince = Date.now() - (lastClaimed * 1000)
     let today = new Date()
     let daysThisMonth = new Date(today.getYear(), today.getMonth(), 0).getDate()
     let msThisMonth = daysThisMonth * 24 * 60 * 60 * 1000
