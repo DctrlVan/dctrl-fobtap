@@ -53,7 +53,7 @@ function attemptToClaim(scannedFob, isHandledCallback){
                 claimant = res.body
                 payoutRequest.action["address"] = claimant.address
                 claimRequest.action["address"] = claimant.address
-                claimRequest.action["notes"] = Date.now().toString()
+                claimRequest.action["notes"] = "dctrl-fobtap"
 
                 claimReq((err, res)=> {
                     if (err) return console.log('claimReq error', err)
