@@ -59,9 +59,9 @@ function attemptToClaim(scannedFob, isHandledCallback){
                     if (err) return console.log('claimReq error', err)
                     payoutReq((err,res)=> {
                         if (err) return console.log('payoutReq error', err)
-                        resetBountyClaim()
                         // TODO: flash led to show bounty claimed successfully
                         slackReq((err, res)=> {
+                            resetBountyClaim()
                             if (err) return console.log('slack err: ', err);
                             console.log('success!')
                         })
