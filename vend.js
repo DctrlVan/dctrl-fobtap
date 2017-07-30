@@ -8,6 +8,7 @@ const vendStream = Kefir.stream(emitter => {
 }).log('vendStream')
 
 function vendChecker(scannedFob) {
+  // first check for valid member
   request
     .get(config.brainLocation + 'members/' + scannedFob)
     .end((err, res) => {
@@ -15,6 +16,7 @@ function vendChecker(scannedFob) {
         console.log('Invalid Fob', err, res.body)
         return null
       }
+      // then create request to charge member, use supply
       let chargeRequest = {
         action: {
           type: "member-charged",
@@ -23,6 +25,15 @@ function vendChecker(scannedFob) {
           notes: "BitPepsi"
         }
       }
+      let supplyUsedRequest = {
+          action: {
+              type: "supplies-used",
+              amount: '1',
+              "supply-type":"bitpepsi",
+              notes: res.body.address
+          }
+      }
+      // charge
       request
         .post(config.brainLocation + 'members')
         .send(chargeRequest)
@@ -31,10 +42,16 @@ function vendChecker(scannedFob) {
             console.log('Unable to create')
             return null
           }
-          console.log(res.body)
-          emit(1)
+          // update stock
+          request
+              .post(config.brainLocation + 'dctrl')
+              .send(supplyUsedRequest)
+              .end((err,res)=>{
+                  // pass to dispense
+                  emit(1)
+              })
         })
-    })
+  })
 }
 
 module.exports = {
