@@ -1,6 +1,6 @@
 const request = require('superagent')
 const config = require('./config')
-var claimRequest, payoutRequest, activeBounty, claimant
+var claimRequest, payoutRequest, useSupplyRequest, activeBounty, claimant
 
 function resetBountyClaim(){
     claimRequest  = {
@@ -12,6 +12,14 @@ function resetBountyClaim(){
         action: {
             type: "member-paid",
             "cash?": false,
+        }
+    }
+    useSupplyRequest = {
+        action: {
+            type: "supplies-used",
+            amount: '1',
+            "supply-type":"bitpepsi",
+            notes: ""
         }
     }
     activeBounty = false
@@ -59,12 +67,15 @@ function attemptToClaim(scannedFob, isHandledCallback){
                     if (err) return console.log('claimReq error', err)
                     payoutReq((err,res)=> {
                         if (err) return console.log('payoutReq error', err)
-                        // TODO: flash led to show bounty claimed successfully
-                        slackReq((err, res)=> {
-                            resetBountyClaim()
-                            if (err) return console.log('slack err: ', err);
-                            console.log('success!')
+                        supplyUsedReq((err,res)=>{
+                            if (err) return console.log('useSupplyReq error', err)
+                            slackReq((err, res)=> {
+                                resetBountyClaim()
+                                if (err) return console.log('slack err: ', err);
+                                console.log('success!')
+                            })
                         })
+                        // TODO: flash led to show bounty claimed successfully
                     })
                 })
             }
@@ -111,6 +122,15 @@ function payoutReq(callback){
         .send(payoutRequest)
         .end(callback)
 }
+
+function supplyUsedReq(callback){
+    console.log(payoutRequest)
+    request
+        .post(config.brainLocation + 'dctrl')
+        .send(useSupplyRequest)
+        .end(callback)
+}
+
 
 function slackReq(callback){
     request
