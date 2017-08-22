@@ -16,11 +16,15 @@ function vendChecker(scannedFob) {
         console.log('Invalid Fob', err, res.body)
         return null
       }
+      let creditLimit = res.body.active * -3
+      if ( res.body.balance < creditLimit){
+          return console.log("Credit limit reached not vending :(")
+      }
       // then create request to charge member, use supply
       let chargeRequest = {
         action: {
           type: "member-charged",
-          address: res.body.address,
+          "member-id": res.body["member-id"],
           amount: "3",
           notes: "BitPepsi"
         }
@@ -30,7 +34,7 @@ function vendChecker(scannedFob) {
               type: "supplies-used",
               amount: '1',
               "supply-type":"bitpepsi",
-              notes: res.body.address
+              notes: res.body["member-id"]
           }
       }
       // charge
