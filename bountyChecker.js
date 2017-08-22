@@ -51,8 +51,8 @@ function attemptToClaim(scannedFob, isHandledCallback){
                 return triggerNotHandled(isHandledCallback)
             } else {
                 claimant = res.body
-                payoutRequest.action["address"] = claimant.address
-                claimRequest.action["address"] = claimant.address
+                payoutRequest.action["member-id"] = claimant["member-id"]
+                claimRequest.action["member-id"] = claimant["member-id"]
                 claimRequest.action["notes"] = "dctrl-fobtap"
 
                 claimReq((err, res)=> {
