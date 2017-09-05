@@ -1,7 +1,7 @@
 const Kefir = require('kefir')
 const evdev = require('evdev')
 
-const config = require('./config')
+const config = require('./configuration')
 
 const reader = new evdev()
 const device = reader.open(config.fobReader)
