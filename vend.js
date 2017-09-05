@@ -1,6 +1,6 @@
 const Kefir = require('kefir')
 const request = require('superagent')
-const config = require('./config')
+const config = require('./configuration')
 
 var emit = null
 const vendStream = Kefir.stream(emitter => {
@@ -10,7 +10,7 @@ const vendStream = Kefir.stream(emitter => {
 function vendChecker(scannedFob) {
   // first check for valid member
   request
-    .get(config.brainLocation + 'members/' + scannedFob)
+    .get(config.brainLocation + 'state/members/' + scannedFob)
     .end((err, res) => {
       if (err || res.body.error) {
         console.log('Invalid Fob', err, res.body)
@@ -21,26 +21,22 @@ function vendChecker(scannedFob) {
           return console.log("Credit limit reached not vending :(")
       }
       // then create request to charge member, use supply
-      let chargeRequest = {
-        action: {
+      let chargeEvent = {
           type: "member-charged",
-          "member-id": res.body["member-id"],
-          amount: "3",
-          notes: "BitPepsi"
-        }
+          memberId: res.body.memberId,
+          notes: "bitpepsi",
+          amount: "3"
       }
-      let supplyUsedRequest = {
-          action: {
-              type: "supplies-used",
-              amount: '1',
-              "supply-type":"bitpepsi",
-              notes: res.body["member-id"]
-          }
+      let usedEvent = {
+          type: "supplies-used",
+          amount: '1',
+          supplyType:"bitpepsi",
+          notes: res.body.memberId
       }
       // charge
       request
-        .post(config.brainLocation + 'members')
-        .send(chargeRequest)
+        .post(config.brainLocation + 'events/member_charge')
+        .send(chargeEvent)
         .end((err, res) => {
           if (err || res.body.error) {
             console.log('Unable to create')
@@ -48,8 +44,8 @@ function vendChecker(scannedFob) {
           }
           // update stock
           request
-              .post(config.brainLocation + 'dctrl')
-              .send(supplyUsedRequest)
+              .post(config.brainLocation + 'events/supplies_use')
+              .send(usedEvent)
               .end((err,res)=>{
                   // pass to dispense
                   emit(1)

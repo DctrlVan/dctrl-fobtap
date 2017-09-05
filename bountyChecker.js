@@ -1,23 +1,19 @@
 const request = require('superagent')
-const config = require('./config')
+const config = require('./configuration')
 var claimRequest, payoutRequest, activeBounty, claimant
 
 function resetBountyClaim(){
     claimRequest  = {
-        action: {
-            type: "bounty-claimed",
-        }
+        type: "bounty-claimed"
     }
     payoutRequest = {
-        action: {
-            type: "member-paid",
-            "cash?": false,
-        }
+        type: "member-paid",
+        isCash: false
     }
     activeBounty = false
 }
-resetBountyClaim()
 
+resetBountyClaim()
 var notHandled = 0
 function triggerNotHandled(isHandledCallback){
     notHandled++
@@ -30,6 +26,7 @@ function triggerNotHandled(isHandledCallback){
 // exported
 function bountyClaimProcess(scannedFob, isHandledCallback) {
     notHandled = 0
+    //
     bountyTagCheck(scannedFob, isHandledCallback)
     if (activeBounty) {
         // Have an active bounty so next tap is to claim bounty:
@@ -48,12 +45,13 @@ function attemptToClaim(scannedFob, isHandledCallback){
                 console.log('Invalid Fob')
                 // clear bounty if random fob tries to claim?
                 resetBountyClaim()
+                // no response indicates
                 return triggerNotHandled(isHandledCallback)
             } else {
                 claimant = res.body
-                payoutRequest.action["member-id"] = claimant["member-id"]
-                claimRequest.action["member-id"] = claimant["member-id"]
-                claimRequest.action["notes"] = "dctrl-fobtap"
+                payoutRequest.memberId = claimant.memberId
+                claimRequest.memberId = claimant.memberId
+                claimRequest.notes = "dctrl-fobtap"
 
                 claimReq((err, res)=> {
                     if (err) return console.log('claimReq error', err)
@@ -80,18 +78,18 @@ function bountyTagCheck(scannedFob, isHandledCallback){
                 console.log('No bounty, bounties/:fob')
                 triggerNotHandled(isHandledCallback)
             } else {
-              activeBounty = res.body
-              console.log("new active bounty!", activeBounty)
+                activeBounty = res.body
+                console.log("new active bounty!", activeBounty)
 
-              let monthValue = activeBounty.value
-              let lastClaimed = activeBounty['last-claimed']
-              let amount = calculatePayout(monthValue, lastClaimed)
-              // Build in the info we need from the bounty, next tap will send these requests
-              claimRequest.action["bounty-id"] = activeBounty["bounty-id"]
-              payoutRequest.action["notes"] = activeBounty["bounty-id"]
-              payoutRequest.action["amount"] = amount.toString()
-              // This was a bounty tag so we do not need to check for beer
-              isHandledCallback(true)
+                let monthValue = activeBounty.value
+                let lastClaimed = activeBounty['last-claimed']
+                let amount = calculatePayout(monthValue, lastClaimed)
+                // Build in the info we need from the bounty, next tap will send these requests
+                claimRequest.bountyId = activeBounty.bountyId
+                payoutRequest.notes = activeBounty.bountyId
+                payoutRequest.amount = amount.toString()
+                // This was a bounty tag so tap has been handled
+                isHandledCallback(true)
             }
         })
 }
