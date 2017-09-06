@@ -2,7 +2,7 @@ const request = require('superagent')
 const config = require('./configuration')
 
 // As taps are recieved claimRequest is built
-var claimRequest, activeBounty, notHandled
+var claimEvent, activeBounty, notHandled
 resetBountyClaim()
 
 function resetBountyClaim(){
@@ -50,19 +50,14 @@ function attemptToClaim(scannedFob, isHandledCallback){
             } else {
                 claimant = res.body
                 claimRequest.memberId = claimant.memberId
-                claimRequest.
 
                 claimReq((err, res)=> {
                     if (err) return console.log('claimReq error', err)
-                    payoutReq((err,res)=> {
-                        if (err) return console.log('payoutReq error', err)
-                        // TODO: flash led to show bounty claimed successfully
-                        slackReq((err, res)=> {
+                    slackReq((err, res)=> {
                             resetBountyClaim()
                             if (err) return console.log('slack err: ', err);
                             console.log('success!')
                         })
-                    })
                 })
             }
         })
@@ -98,12 +93,18 @@ function slackReq(callback){
         .end(callback)
 }
 // The value
-function calculatePayout(monthValue, lastClaimed){
-    let msSince = Date.now() - lastClaimed
-    let today = new Date()
-    let daysThisMonth = new Date(today.getYear(), today.getMonth(), 0).getDate()
-    let msThisMonth = daysThisMonth * 24 * 60 * 60 * 1000
-    return (msSince / msThisMonth) * monthValue
+function calculatePayout(bounty){
+    let msThisMonth = calculateMsThisMonth()
+    let msSince = Date.now() - bounty.lastClaimed
+    let payout = (msSince / msThisMonth) * parseFloat(bounty.value)
+    let cap = parseFloat(bounty.cap)
+    let boost = parseFloat(bounty.boost) || 0
+    if (cap > 0){
+        return Math.min(payout, cap) + boost
+    }
+    else {
+        return payout + boost
+    }
 }
 
 module.exports = { bountyChecker }
