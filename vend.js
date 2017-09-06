@@ -10,39 +10,26 @@ const vendStream = Kefir.stream(emitter => {
 function vendChecker(scannedFob) {
   // first check for valid member
   request
-    .get(config.brainLocation + 'state/members/' + scannedFob)
-    .end((err, res) => {
-      if (err || res.body.error) {
-        console.log('Invalid Fob', err, res.body)
-        return null
-      }
-      let creditLimit = res.body.active * -3
-      if ( res.body.balance < creditLimit){
-          return console.log("Credit limit reached not vending :(")
-      }
-      // then create request to charge member, use supply
-      let chargeEvent = {
-          type: "member-charged",
-          memberId: res.body.memberId,
-          notes: "bitpepsi",
-          amount: "3"
-      }
-      let usedEvent = {
-          type: "supplies-used",
-          amount: '1',
-          supplyType:"bitpepsi",
-          notes: res.body.memberId
-      }
-      // charge
-      request
-        .post(config.brainLocation + 'events/member_charge')
-        .send(chargeEvent)
-        .end((err, res) => {
+      .get(config.brainLocation + 'state/members/' + scannedFob)
+      .end((err, res) => {
           if (err || res.body.error) {
-            console.log('Unable to create')
+            console.log('Invalid Fob', err, res.body)
             return null
           }
-          // update stock
+          let creditLimit = res.body.active * -3
+          if ( res.body.balance < creditLimit){
+              return console.log("Credit limit reached not vending :(")
+          }
+          // then create request to charge member, use supply
+          let usedEvent = {
+              type: "supplies-used",
+              charged: 3,
+              amount: 1,
+              memberId: res.body.memberId,
+              supplyType: "bitpepsi",
+              notes: 'dctrl-fobtap'
+          }
+
           request
               .post(config.brainLocation + 'events/supplies_use')
               .send(usedEvent)
@@ -50,8 +37,7 @@ function vendChecker(scannedFob) {
                   // pass to dispense
                   emit(1)
               })
-        })
-  })
+      })
 }
 
 module.exports = {
