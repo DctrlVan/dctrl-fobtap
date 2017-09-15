@@ -56,6 +56,6 @@ function bitPepsi(paymentStream) {
 
     const outputStream = timingLayer
         .filter(status => status.trigger)
-        .flatMapConcat(() => Kefir.sequentially(2000, [1, 0]))
+        .flatMapConcat(() => Kefir.sequentially(200, [1, 0]))
         .onValue(pinValue => exec(`echo "` + pinValue + `"> /sys/class/gpio/gpio17/value`))
 }

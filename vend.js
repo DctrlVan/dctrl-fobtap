@@ -1,11 +1,41 @@
+const r = require('rethinkdb')
 const Kefir = require('kefir')
 const request = require('superagent')
 const config = require('./configuration')
+var conn
 
-var emit = null
+var vendEmit = null
 const vendStream = Kefir.stream(emitter => {
-    emit = emitter.emit
+    vendEmit = emitter.emit
 }).log('vendStream')
+
+function startFeed(){
+    console.log("starting feed...")
+    r
+        .table('events')
+        .filter({
+            type: "supplies-used",
+            supplyType: "bitpepsi"
+        })
+        .changes()
+        .run(conn, (err, cursor)=> {
+            if (err) return console.log('err getting feed', err)
+            cursor.each((err, ev)=>{
+                if (err) return console.log('err getting event', err)
+                vendEmit(1)
+            })
+        })
+}
+
+r
+    .connect({
+        db: 'dctrl',
+        host: config.rethinkLocation
+    }).then(rethinkDbConnection => {
+        console.log("db connected")
+        conn = rethinkDbConnection
+        startFeed()
+    })
 
 function vendChecker(scannedFob) {
   // first check for valid member
@@ -34,8 +64,8 @@ function vendChecker(scannedFob) {
               .post(config.brainLocation + 'events/supplies_use')
               .send(usedEvent)
               .end((err,res)=>{
-                  // pass to dispense
-                  emit(1)
+                  // db event listener will trigger if this was successful
+                  console.log(res.body)
               })
       })
 }

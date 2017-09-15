@@ -11,6 +11,7 @@
   "dependencies": {
     "evdev": "^0.2.3",
     "kefir": "^3.7.2",
+    "rethinkdb": "^2.3.3",
     "superagent": "^3.5.2"
   }
 }
