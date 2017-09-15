@@ -22,6 +22,7 @@ function startFeed(){
             if (err) return console.log('err getting feed', err)
             cursor.each((err, ev)=>{
                 if (err) return console.log('err getting event', err)
+                console.log({ev})
                 vendEmit(1)
             })
         })
@@ -38,21 +39,19 @@ r
     })
 
 function vendChecker(scannedFob) {
-  // first check for valid member
   request
       .get(config.brainLocation + 'state/members/' + scannedFob)
       .end((err, res) => {
-          if (err || res.body.error) {
-            console.log('Invalid Fob', err, res.body)
-            return null
+          if (err) {
+            return console.log({err})
           }
+
           let creditLimit = res.body.active * -3
           if ( res.body.balance < creditLimit){
               return console.log("Credit limit reached not vending :(")
           }
-          // then create request to charge member, use supply
-          let usedEvent = {
-              type: "supplies-used",
+
+          let usedReq = {
               charged: 3,
               amount: 1,
               memberId: res.body.memberId,
@@ -62,9 +61,8 @@ function vendChecker(scannedFob) {
 
           request
               .post(config.brainLocation + 'events/supplies_use')
-              .send(usedEvent)
+              .send(usedReq)
               .end((err,res)=>{
-                  // db event listener will trigger if this was successful
                   console.log(res.body)
               })
       })
