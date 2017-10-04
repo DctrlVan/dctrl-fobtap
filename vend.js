@@ -4,13 +4,15 @@ const request = require('superagent')
 const config = require('./configuration')
 var conn
 
+
+// file listens for supplies used events and pas
+
 var vendEmit = null
 const vendStream = Kefir.stream(emitter => {
     vendEmit = emitter.emit
 }).log('vendStream')
 
 function startFeed(){
-    console.log("starting feed...")
     r
         .table('events')
         .filter({
@@ -29,46 +31,14 @@ function startFeed(){
 }
 
 r
-    .connect({
-        db: 'dctrl',
-        host: config.rethinkLocation
-    }).then(rethinkDbConnection => {
+    .connect(config.rethink)
+    .then(rethinkDbConnection => {
         console.log("db connected")
         conn = rethinkDbConnection
         startFeed()
     })
 
-function vendChecker(scannedFob) {
-  request
-      .get(config.brainLocation + 'state/members/' + scannedFob)
-      .end((err, res) => {
-          if (err) {
-            return console.log({err})
-          }
-
-          let creditLimit = res.body.active * -3
-          if ( res.body.balance < creditLimit){
-              return console.log("Credit limit reached not vending :(")
-          }
-
-          let usedReq = {
-              charged: 3,
-              amount: 1,
-              memberId: res.body.memberId,
-              supplyType: "bitpepsi",
-              notes: 'dctrl-fobtap'
-          }
-
-          request
-              .post(config.brainLocation + 'events/supplies_use')
-              .send(usedReq)
-              .end((err,res)=>{
-                  console.log(res.body)
-              })
-      })
-}
 
 module.exports = {
-    vendChecker,
     vendStream
 }
