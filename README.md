@@ -23,3 +23,5 @@ Logic that works with the rfid reader and exposes a kefir stream of the fob valu
 
 ### vend.js
 This file listens on the db event creation creates a dispense event.
+
+### Setting up the Raspberry Pi with Arch Linux
