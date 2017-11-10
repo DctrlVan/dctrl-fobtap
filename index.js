@@ -10,10 +10,12 @@ fobtapStream
   .throttle(2345, {trailing: false})
   .onValue(fob => {
     request
-        .post(config.brainLocation + 'fobtap')
+        .post(config.brainLocation + 'events')
         .send({
             fob,
-            resourceId: config.resourceId
+            resourceId: config.resourceId,
+            amount: 1,
+            charged: config.charged
         })
         .end( (err, res)=>{
             console.log({err,res})

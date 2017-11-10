@@ -6,8 +6,6 @@ const config = require('./configuration')
 const reader = new evdev()
 const device = reader.open(config.fobReader)
 
-console.log({device})
-
 var fob = ""
 var emit = null
 
