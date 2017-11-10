@@ -6,8 +6,8 @@ Requires=gpio-exporter.service
 After=gpio-exporter.service
 
 [Service]
-User=rhodes
-ExecStart=/usr/bin/node /home/username/... location
+User=alarm
+ExecStart=/usr/bin/node /home/alarm/dctrl-fobtap/index.js
 Restart=always
 
 [Install]

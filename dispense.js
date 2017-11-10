@@ -2,11 +2,11 @@
 const Kefir = require('kefir')
 const exec = require('child_process').exec
 
-const ps = require('./vend').vendStream
-ps.log('passed to dispense')
+const resourceUsedStream = require('./resourceUsedStream')
+resourceUsedStream.log('dispense')
+module.exports = bitPepsi(resourceUsedStream)
 
-module.exports = bitPepsi(ps)
-
+// XXX this is logic for vending not door, need to be able to config 
 function bitPepsi(paymentStream) {
     var heartbeat
 

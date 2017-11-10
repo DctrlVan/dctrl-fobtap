@@ -6,19 +6,19 @@ const config = require('./configuration')
 const reader = new evdev()
 const device = reader.open(config.fobReader)
 
+console.log({device})
+
 var fob = ""
 var emit = null
 
-const fobtapStream = Kefir.stream(emitter => {
+module.exports = Kefir.stream(emitter => {
     emit = emitter.emit
 }).log()
-
-module.exports = fobtapStream
 
 reader.on("EV_KEY", function(data) {
     if (data.value == 1)
         keyparse(data.code)
-});
+})
 
 function keyparse(code) {
     var key = code.substr(4);
