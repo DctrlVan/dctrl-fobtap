@@ -1,7 +1,7 @@
 The dctrl-fobtap repo is designed to run on a raspberry pi which is connected to a rfid fob reader
 (ie: 125khz USB Contactless Proximity Card ID Reader RFID EM4100 EM4102 TK4100).
 
-###UPDATE FOBTAP Resource commands
+### UPDATE FOBTAP Resource commands
 
 In Arch Linux use the `alarm@alarmpi gpio]$ echo "17" | sudo tee /sys/class/gpio/export` command for exporting the GPIO pin you are using. We use 17.
 
