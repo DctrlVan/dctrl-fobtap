@@ -1,15 +1,13 @@
 
 const Kefir = require('kefir')
 const exec = require('child_process').exec
-
-const resourceUsedStream = require('./resourceUsedStream')
+const resourceUsedStream = require('../resourceUsedStream')
 resourceUsedStream.log('dispense')
 module.exports = bitPepsi(resourceUsedStream)
 
-// XXX this is logic for vending not door, need to be able to config 
+// XXX this is logic for vending not door, need to be able to config
 function bitPepsi(paymentStream) {
     var heartbeat
-
     const _beat = {}
     const heartStream = Kefir.stream(beat => {
         heartbeat = setInterval(beat.emit, 1000, {
@@ -17,7 +15,6 @@ function bitPepsi(paymentStream) {
         })
         _beat['emit'] = beat.emit
     })
-
     const timingLayer = Kefir
         .merge([paymentStream, heartStream])
         .scan((status, timingEvent) => {
@@ -38,7 +35,7 @@ function bitPepsi(paymentStream) {
                 if (timingEvent >= 1 && status.wait < 1){
                     status.trigger = true
                     status.pending -= 1
-		    status.wait += 11
+                    status.wait += 11
                 }
                 status.pending += timingEvent
                 if (!heartbeat) {

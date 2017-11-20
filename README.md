@@ -28,3 +28,20 @@ This file listens on the db event creation creates a dispense event.
 Always update Arch's dedicated package manager 'pacman' with
 `pacman -Syu`
 
+
+Example Configuration File on pi: `configuration.js`
+- You can find your fobReader id using `ls /dev/input/by-id`
+
+```
+module.exports = {
+    brainLocation: 'localhost:8003/',
+    resourceId: 'door',
+    charged: 0,
+    rethink: {
+      db: 'dctrl',
+      host: '<host>'
+    },
+    reaction: 'door',
+    fobReader: "/dev/input/by-id/usb-Sycreader_USB_Reader_08FF20150112-event-kbd"
+}
+```

@@ -1,10 +1,10 @@
 
-require('./dispense')
 
 const request = require('superagent')
 const config = require('./configuration')
 const fobtapStream = require('./fobtapStream')
-// listen on the fob numbers from the reader and async chain bounty check then vend check
+require('./reactions/' + config.reaction)
+
 fobtapStream
   .log()
   .throttle(2345, {trailing: false})
@@ -17,6 +17,6 @@ fobtapStream
         })
         .end( (err, res)=>{
             if (err) return console.log( err.message )
-            console.log("res.body:", res.body)
+            console.log("result:", res.body)
         })
 })
