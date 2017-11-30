@@ -1,7 +1,9 @@
 
 const Kefir = require('kefir')
-const exec = require('child_process').exec
 const resourceUsedStream = require('../resourceUsedStream')
+const Gpio = require('onoff').Gpio
+const pin = new Gpio(17, 'out')
+
 resourceUsedStream.log('dispense')
 module.exports = bitPepsi(resourceUsedStream)
 
@@ -53,6 +55,13 @@ function bitPepsi(paymentStream) {
 
     const outputStream = timingLayer
         .filter(status => status.trigger)
-        .flatMapConcat(() => Kefir.sequentially(200, [1, 0]))
-        .onValue(pinValue => exec(`echo "` + pinValue + `"> /sys/class/gpio/gpio17/value`))
+        .onValue(beer)
+}
+
+
+function beer(){
+    pin.writeSync(1)
+    setTimeout(()=>{
+        pin.writeSync(0)
+    }, 200)
 }
