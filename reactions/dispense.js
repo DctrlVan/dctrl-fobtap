@@ -63,5 +63,5 @@ function beer(){
     pin.writeSync(1)
     setTimeout(()=>{
         pin.writeSync(0)
-    }, 200)
+    }, 1000)
 }
