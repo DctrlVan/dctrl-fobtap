@@ -17,8 +17,8 @@ fobtapStream
   .throttle(2345, {trailing: false})
   .onValue(fob => {
     request
-        .set('Authorization', config.token)
         .post(config.brainLocation + 'fobtap')
+        .set('Authorization', config.token)
         .send({
             fob,
             resourceId: config.resourceId
@@ -28,7 +28,6 @@ fobtapStream
                 // TODO
                 return console.log('err res from server, may be down need a fallback', err)
             }
-            console.log("result:", res)
-            //
+            console.log('fobtap registered!')
         })
 })

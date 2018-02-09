@@ -1,8 +1,11 @@
 const io = require('socket.io-client')
-const socket = io('ws://localhost:8003/')
 const Kefir = require('kefir')
 const request = require('superagent')
 const config = require('./configuration')
+
+console.log('resourceUsedStream')
+
+const socket = io('ws://' + config.brainLocation)
 
 var resourceUsed //
 module.exports = Kefir.stream(emitter => {
