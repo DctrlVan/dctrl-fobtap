@@ -25,7 +25,6 @@ socket.on('connect', ()=> {
             ev.type === 'resource-used' &&
             ev.resourceId === config.resourceId
         ){
-
             let amount = 1
             if (ev.charged){
                 amount = ev.amount / ev.charged

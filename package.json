@@ -11,10 +11,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "colors": "^1.1.2",
     "evdev": "^0.2.3",
     "kefir": "^3.7.2",
     "onoff": "^1.1.8",
+    "prompt": "^1.0.0",
     "rethinkdb": "^2.3.3",
-    "superagent": "^3.5.2"
+    "socket.io-client": "^2.0.4",
+    "superagent": "^3.5.2",
+    "uuid": "^3.2.1"
   }
 }

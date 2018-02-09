@@ -1,15 +1,17 @@
 
-
 const request = require('superagent')
 const config = require('./configuration')
 const fobtapStream = require('./fobtapStream')
+
+console.log(config)
 
 // initialize reactions that listen to socket feed
 require('./reactions/' + config.reaction)
 
 // core functionality is read tap and hit post to server.
-// this allows task claiming, layered on the resource used
 // see: https://github.com/DecentralVan/dctrl-admin/blob/master/server/fobtap/index.js
+// this allows task claiming, layered on the resource used
+
 fobtapStream
   .log()
   .throttle(2345, {trailing: false})
