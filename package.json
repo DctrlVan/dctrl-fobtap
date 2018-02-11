@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bloom-filter": "^0.2.0",
     "colors": "^1.1.2",
     "evdev": "^0.2.3",
     "kefir": "^3.7.2",

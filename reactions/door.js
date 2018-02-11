@@ -20,3 +20,5 @@ function door(){
         pin.writeSync(0)
     }, 12345)
 }
+
+module.exports = door

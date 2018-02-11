@@ -1,16 +1,29 @@
 
 const request = require('superagent')
 const config = require('./configuration')
+const cryptoUtils = require('./crypto')
 const fobtapStream = require('./fobtapStream')
+const BloomFilter = require('bloom-filter')
+const door = require('./reactions/door')
 
-console.log(config)
-
-// initialize reactions that listen to socket feed
 require('./reactions/' + config.reaction)
 
-// core functionality is read tap and hit post to server.
-// see: https://github.com/DecentralVan/dctrl-admin/blob/master/server/fobtap/index.js
-// this allows task claiming, layered on the resource used
+var filter
+
+request
+    .post(config.brainLocation + 'bloom')
+    .set('Authorization', config.token)
+    .end( (err, res)=>{
+        if (err) {
+            return console.log('err res from server, may be down, cannot get bloom', err)
+        }
+        if (res.body.filter){
+            console.log('got a backup filter')
+            filter = new BloomFilter( res.body.filter )
+        }
+        // TODO poll to keep up to date?
+    })
+
 
 fobtapStream
   .log()
@@ -25,7 +38,10 @@ fobtapStream
         })
         .end( (err, res)=>{
             if (err) {
-                // TODO
+                if (filter.contains( cryptoUtils.createHash(fob))){
+                    console.log('fob passed bloom filter')
+                    door()
+                }
                 return console.log('err res from server, may be down need a fallback', err)
             }
             console.log('fobtap registered!')
