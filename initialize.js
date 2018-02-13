@@ -1,8 +1,8 @@
 
-
 const prompt = require('prompt')
 const request = require('superagent')
 const uuidV1 = require('uuid/v1')
+const uuidV4 = require('uuid/v4')
 const colors = require("colors/safe");
 const fs = require('fs')
 const cryptoUtils = require('./crypto')
@@ -114,7 +114,7 @@ function auth(admin, name, secret, callback){
 
 function createResource(admin, token, name, charged, callback){
     let resourceId = uuidV1()
-    let secret = uuidV1()
+    let secret = uuidV4()
     console.log('attempting to create new resource:', name)
     request
         .post(admin + 'events')
