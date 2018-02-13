@@ -6,17 +6,16 @@ const config = require('./configuration')
 
 const socket = new WebSocket('ws://' + config.brainLocation);
 
-// ws.on('open', function open() {
-//   ws.send('something');
-// });
+ws.on('open', function open() {
+    console.log('open triggered')
+    ws.send('something');
+});
 //
 // ws.on('message', function incoming(data) {
 //   console.log(data);
 // });
 
 console.log('resourceUsedStream')
-
-const socket = io()
 
 var resourceUsed //
 module.exports = Kefir.stream(emitter => {
