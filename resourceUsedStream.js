@@ -6,7 +6,11 @@ const config = require('./configuration')
 
 const socket = new WebSocket('ws://' + config.brainLocation);
 
-ws.on('open', function open() {
+socket.emit('authentication', {
+    token: config.token
+})
+
+socket.on('open', function open() {
     console.log('open triggered')
     ws.send('something');
 });
