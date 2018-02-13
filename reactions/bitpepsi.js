@@ -58,7 +58,6 @@ function bitPepsi(paymentStream) {
         .onValue(beer)
 }
 
-
 function beer(){
     pin.writeSync(1)
     setTimeout(()=>{

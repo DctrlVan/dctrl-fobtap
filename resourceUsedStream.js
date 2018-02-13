@@ -15,8 +15,9 @@ module.exports = Kefir.stream(emitter => {
 socket.on('connect', ()=> {
     console.log('Connected!!!!*!~!!*~!~!~*~~')
 
+    console.log('attempting to auth with', config.token)
     socket.emit('authentication', {
-      token: config.token
+        token: config.token
     })
 
     socket.on('authenticated', ()=> {
