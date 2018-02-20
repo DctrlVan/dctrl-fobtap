@@ -2,12 +2,17 @@
 const Kefir = require('kefir')
 const resourceUsedStream = require('../resourceUsedStream')
 const Gpio = require('onoff').Gpio
-const pin = new Gpio(17, 'out')
+const pin17 = new Gpio(17, 'out')
+const pin18 = new Gpio(18, 'out')
+
+// pin18 goes low while pin 17 goes high pin trigger
+pin18.writeSync(1)
+pin17.writeSync(0)
 
 resourceUsedStream.log('dispense')
 module.exports = bitPepsi(resourceUsedStream)
 
-// XXX this is logic for vending not door, need to be able to config
+// payment logic recieves stream of payments and ensures payouts are spaced out
 function bitPepsi(paymentStream) {
     var heartbeat
     const _beat = {}
@@ -59,8 +64,10 @@ function bitPepsi(paymentStream) {
 }
 
 function beer(){
-    pin.writeSync(1)
+    pin18.writeSync(0)
+    pin17.writeSync(1)
     setTimeout(()=>{
-        pin.writeSync(0)
-    }, 1000)
+        pin17.writeSync(0)
+        pin18.writeSync(1)
+    }, 500)
 }

@@ -16,7 +16,7 @@ socket.on('connect', ()=> {
     console.log('Connected!!!!*!~!!*~!~!~*~~')
 
     socket.emit('authentication', {
-      token: config.token
+        token: config.token
     })
 
     socket.on('authenticated', ()=> {

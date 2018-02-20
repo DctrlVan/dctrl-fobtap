@@ -4,29 +4,26 @@ const config = require('./configuration')
 const cryptoUtils = require('./crypto')
 const fobtapStream = require('./fobtapStream')
 const BloomFilter = require('bloom-filter')
-const door = require('./reactions/door')
 const fs = require('fs')
 
-require('./reactions/' + config.reaction)
+// require('./reactions/' + config.reaction)
 
 var filter
-
-request
-    .post(config.brainLocation + 'bloom')
-    .set('Authorization', config.token)
-    .end( (err, res)=>{
-        if (err) {
-            return console.log('err res from server, may be down, cannot get bloom', err)
-        }
-        if (res.body.filter){
-            console.log('got a backup filter')
-            fs.writeFileSync(__dirname + '/bloom', filter.toObject())
-            filter = new BloomFilter( res.body.filter )
-        }
-        // TODO poll to keep up to date?
-    })
-
-
+// TODO: door work if server down
+// request
+//     .post(config.brainLocation + 'bloom')
+//     .set('Authorization', config.token)
+//     .end( (err, res)=>{
+//         if (err) {
+//             return console.log('err res from server, may be down, cannot get bloom', err)
+//         }
+//
+//         console.log('got a backup filter')
+//         filter = new BloomFilter( res.body.filter )
+//         console.log({filter})
+//
+//         fs.writeFileSync(__dirname + '/bloom', filter)
+//     })
 
 fobtapStream
   .log()
@@ -41,12 +38,12 @@ fobtapStream
         })
         .end( (err, res)=>{
             if (err) {
-
-                if (config.reaction === 'door' && filter.contains( cryptoUtils.createHash(fob))){
-                    console.log('fob passed bloom filter')
-                    door()
-                }
-                return console.log('err res from server, may be down need a fallback', err)
+                // TODO:
+                // if (config.reaction === 'door' && filter.contains( cryptoUtils.createHash(fob))){
+                //     console.log('fob passed bloom filter')
+                //     door()
+                // }
+                // return console.log('err res from server, may be down need a fallback', err)
             }
             console.log('fobtap registered!')
         })
