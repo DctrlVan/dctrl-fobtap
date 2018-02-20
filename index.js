@@ -5,6 +5,7 @@ const cryptoUtils = require('./crypto')
 const fobtapStream = require('./fobtapStream')
 const BloomFilter = require('bloom-filter')
 const door = require('./reactions/door')
+const fs = require('fs')
 
 require('./reactions/' + config.reaction)
 
@@ -19,10 +20,12 @@ request
         }
         if (res.body.filter){
             console.log('got a backup filter')
+            fs.writeFileSync(__dirname + '/bloom', filter.toObject())
             filter = new BloomFilter( res.body.filter )
         }
         // TODO poll to keep up to date?
     })
+
 
 
 fobtapStream
@@ -38,7 +41,8 @@ fobtapStream
         })
         .end( (err, res)=>{
             if (err) {
-                if (filter.contains( cryptoUtils.createHash(fob))){
+
+                if (config.reaction === 'door' && filter.contains( cryptoUtils.createHash(fob))){
                     console.log('fob passed bloom filter')
                     door()
                 }
