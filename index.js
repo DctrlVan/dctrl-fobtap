@@ -1,12 +1,12 @@
 
 const request = require('superagent')
+const BloomFilter = require('bloom-filter')
 const config = require('./configuration')
 const cryptoUtils = require('./crypto')
 const fobtapStream = require('./fobtapStream')
-const BloomFilter = require('bloom-filter')
 const fs = require('fs')
 
-// require('./reactions/' + config.reaction)
+require('./reactions/' + config.reaction)
 
 var filter
 // TODO: door work if server down
@@ -38,6 +38,7 @@ fobtapStream
         })
         .end( (err, res)=>{
             if (err) {
+                console.log({err})
                 // TODO:
                 // if (config.reaction === 'door' && filter.contains( cryptoUtils.createHash(fob))){
                 //     console.log('fob passed bloom filter')

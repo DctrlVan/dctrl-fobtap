@@ -25,13 +25,19 @@ socket.on('connect', ()=> {
       socket.on('eventstream', ev => {
         console.log('evstream', ev)
         if (
+            ev.type === 'invoice-paid' &&
+            ev.ownerId === config.resourceId
+        ){
+            let amount = 1
+            // TODO: payout by CAD_AMOUNT / config.charged
+            resourceUsed(amount)
+        }
+
+        if (
             ev.type === 'resource-used' &&
             ev.resourceId === config.resourceId
         ){
             let amount = 1
-            if (ev.charged){
-                amount = ev.amount / ev.charged
-            }
             resourceUsed(amount)
         }
       })
